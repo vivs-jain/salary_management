@@ -1,35 +1,52 @@
 
 import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate
+} from 'react-router-dom'
 
-function Home() {
-  return (
-    <div className="container py-5">
-      <div className="card shadow-sm">
-        <div className="card-body p-5 text-center">
-          <h1 className="text-primary">
-            Salary Management
-          </h1>
+import { AuthProvider } from './contexts/AuthContext'
 
-          <p className="text-muted mt-3">
-            Welcome to the Salary Management System.
-          </p>
+import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
 
-          <span className="badge bg-success">
-            React + Rails integration successful
-          </span>
-        </div>
-      </div>
-    </div>
-  )
-}
+import ProtectedRoute from './routes/ProtectedRoute'
+import GuestRoute from './routes/GuestRoute'
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+
+          {/* Public route */}
+          <Route
+            path="/login"
+            element={
+              <GuestRoute>
+                <Login />
+              </GuestRoute>
+            }
+          />
+
+          {/* Protected routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route
+              path="/dashboard"
+              element={<Dashboard />}
+            />
+          </Route>
+
+          {/* Default route */}
+          <Route
+            path="/"
+            element={<Navigate to="/dashboard" replace />}
+          />
+
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   )
 }
