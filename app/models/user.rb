@@ -19,6 +19,18 @@ class User < ApplicationRecord
             length: { minimum: 8 },
             if: -> { password.present? }
 
+  def has_permission?(module_name, action)
+    roles
+      .where(active: true)
+      .joins(:permissions)
+      .exists?(
+        permissions: {
+          module_name: module_name.to_s.strip.downcase,
+          action: action.to_s.strip.downcase
+        }
+      )
+  end
+
   private
 
   def normalize_email
